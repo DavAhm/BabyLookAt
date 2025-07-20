@@ -1,6 +1,8 @@
-<h1 align="center" style=font-size:200px>Object Tracking with SAM2</h1>
-<h2 align="center" style=font-size:200px> Leveraging SAM2 for multi-purpose long video object trackign>
-<h3 align="center" style=font-size:200px> This repository provides a user-friendly interface for using [Meta AI's SAM2](https://github.com/facebookresearch/sam2) model to track objects in videos. It was developed as part of the EnvisionBOXBABY project, with a focus on analyzing infant-adult interactions using videos recorded from an infant's head-mounted camera.</h3>
+# Object Tracking with SAM2
+
+## Leveraging SAM2 for Multi-Purpose Long Video Object Tracking
+
+This repository provides a user-friendly interface for using [Meta AI's SAM2](https://github.com/facebookresearch/sam2) model to track objects in videos. It was developed as part of the EnvisionBOXBABY project, with a focus on analyzing infant-adult interactions using videos recorded from an infant's head-mounted camera.
 
 
 <h3 align="center" style=font-size:200px>Wim Pouw (wim.pouw@donders.ru.nl), in collaboration with Karl Berg</h2>
