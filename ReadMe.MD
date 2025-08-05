@@ -33,4 +33,4 @@ Creators:
 Follow the installation guide for SAM2: [SAM 2 Installation Instructions →](docs/installation_SAM2.md)
 
 3. ### Install the supporting Tools and Packages 
-Follow the installation guide for SAM2: [SAM 2 Installation Instructions →](docs/installation_SAM2.md)
+Follow the installation guide for Tools and Packages: [Tools and Packages Installation Instructions →](docs/installation_tools_packages.md)
