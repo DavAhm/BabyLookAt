@@ -24,9 +24,13 @@ Creators:
 
 ## Getting Started
 
-1. Follow the installation guide for SAM2: [SAM 2 Installation Instructions →](docs/installation_SAM2.md)
-2. Clone this GitHub Repository and follow the instructions: []
-3. Run the enhanced GUI script:
-   ```bash
-   python sam2_video_enhanced_ui.py
-4. ...
+1. ### Clone this GitHub Repository
+  - Click the green **Code** button at the top of this page.
+  - Select **Download ZIP**.
+  - Extract the ZIP file to your preferred folder (e.g., `C:\Object_Tracking_SAM2`).
+
+2. ### Install Sam2 
+Follow the installation guide for SAM2: [SAM 2 Installation Instructions →](docs/installation_SAM2.md)
+
+3. ### Install the supporting Tools and Packages 
+Follow the installation guide for SAM2: [SAM 2 Installation Instructions →](docs/installation_SAM2.md)

@@ -1,0 +1,12 @@
+torch==2.5.1
+torchvision==0.20.1
+opencv-python
+numpy
+matplotlib
+pillow
+tqdm
+pandas
+psutil
+pyyaml
+customtkinter
+rich

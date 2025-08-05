@@ -26,7 +26,8 @@ We designed this setup for **Windows ≥ 10** users.
 
 ##  Step 1: Create a Conda Environment for SAM2
 
-Let's make a dedicated environment for sam2, which prevents package conflicts and ensures you use Python ≥ 3.10
+Let's make a dedicated environment for sam2, which prevents package conflicts and ensures you use Python ≥ 3.10. 
+Open your Anaconda Prompt (search for Anaconda Prompt on your machine) and type:
 ```bash
 conda create -n sam2_env python=3.10 -y
 conda activate sam2_env
