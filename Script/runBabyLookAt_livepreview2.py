@@ -1969,23 +1969,24 @@ class VideoAnalysisApp:
     
     def get_frame_number_with_preview(self, frames_dir, total_frames):
         """Get frame number with preview functionality"""
-        suggested_frame = total_frames // 2
+        suggested_frame = 0  # Start with the first frame
         
         while True:
             frame_num = simpledialog.askinteger(
-                "Reference Frame Selection - 'Looking At' Event Detection",
-                f"Select reference frame (0-{total_frames-1}):\n\n"
-                f"🎯 'LOOKING AT' EVENT DETECTION:\n"
-                f"• Detects any spatial relationship as 'looking at' event\n"
-                f"• Clean begin/end timing for behavioral analysis\n"
-                f"• Perfect for gaze studies and interaction coding\n"
-                f"📊 Suggested: Frame {suggested_frame} (middle of video)\n\n"
-                f"Enter frame number (or -1 to preview suggested frame):",
-                minvalue=-1,
+                "Select Reference Frame",
+                (
+                    f"Pick the reference frame (0–{total_frames-1}).\n\n"
+                    "Recommended: 0 (the first frame).\n"
+                    "Why: tracking begins from the frame you choose. "
+                    "If you pick a later frame, the beginning of the video may show no masks "
+                    "or 'looking at' annotations.\n\n"
+                    f"Suggested: frame {suggested_frame}"
+                ),
+                minvalue=0,
                 maxvalue=total_frames-1,
-                initialvalue=suggested_frame
+                initialvalue=suggested_frame,
             )
-            
+                    
             if frame_num is None:
                 return None
             
@@ -1994,6 +1995,18 @@ class VideoAnalysisApp:
                     continue
                 else:
                     return None
+                
+            # After you’ve obtained frame_num and before returning it:
+            if frame_num > 0:
+                proceed = messagebox.askyesno(
+                    "Reference Frame Warning",
+                    "You selected a reference frame after the beginning.\n\n"
+                    "With the current pipeline the tracker is seeded at that frame, "
+                    "so earlier frames may have no masks/annotations.\n\n"
+                    "Do you want to continue?"
+                )
+                if not proceed:
+                    continue  # back to the selection dialog
             
             if show_frame_preview(frames_dir, frame_num, total_frames):
                 confirm = messagebox.askyesno("Confirm Frame Selection", 
@@ -2020,7 +2033,7 @@ class VideoAnalysisApp:
 
             total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             if total_frames > 0:
-                cap.set(cv2.CAP_PROP_POS_FRAMES, total_frames // 2)  # middle frame
+                cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # first frame
 
             ret, frame = cap.read()
             cap.release()
