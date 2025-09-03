@@ -10,3 +10,4 @@ psutil==7.0.0
 PyYAML==6.0.2
 customtkinter==5.2.2
 rich==14.1.0
+customtkinter==5.2.2
