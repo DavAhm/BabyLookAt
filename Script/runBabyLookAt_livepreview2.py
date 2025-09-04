@@ -255,12 +255,12 @@ class EnhancedOverlapDetector:
                         spatial_relationship = True
                         overlap_area = np.sum(mask2_bool & mask1_contour)
                         containment_type = "object2_partial_inside_object1"
-                        print(f"    🎯 Part of Object 2 is INSIDE Object 1 boundary ({overlap_area} pixels)")
+                        print(f"     Part of Object 2 is INSIDE Object 1 boundary ({overlap_area} pixels)")
                     elif object1_in_contour2:
                         spatial_relationship = True
                         overlap_area = np.sum(mask1_bool & mask2_contour)
                         containment_type = "object1_partial_inside_object2"
-                        print(f"    🎯 Part of Object 1 is INSIDE Object 2 boundary ({overlap_area} pixels)")
+                        print(f"     Part of Object 1 is INSIDE Object 2 boundary ({overlap_area} pixels)")
                     else:
                         # Fallback to centroid check only if no partial containment
                         inside_1 = cv2.pointPolygonTest(contour1, (cx2, cy2), False) >= 0
@@ -269,11 +269,11 @@ class EnhancedOverlapDetector:
                         if inside_1:
                             spatial_relationship = True
                             containment_type = "object2_centroid_inside_object1"
-                            print(f"    🎯 Object 2 centroid is INSIDE Object 1 boundary")
+                            print(f"     Object 2 centroid is INSIDE Object 1 boundary")
                         elif inside_2:
                             spatial_relationship = True
                             containment_type = "object1_centroid_inside_object2"
-                            print(f"    🎯 Object 1 centroid is INSIDE Object 2 boundary")
+                            print(f"     Object 1 centroid is INSIDE Object 2 boundary")
                     
 
         
@@ -1084,7 +1084,7 @@ class UltraOptimizedProcessor:
                         else:
                             target_events.append(f"{target_name} → {len(object_names)} objects")
                 
-                status_messages = [f"🎯 LOOKING AT DETECTED: {'; '.join(target_events)}"]
+                status_messages = [f" LOOKING AT DETECTED: {'; '.join(target_events)}"]
             
             # Draw status messages
             info_y = 30
@@ -1255,7 +1255,7 @@ class UltraOptimizedProcessor:
         print(f"\n📄 Timing Verification:")
         for target_name, target_data in summary.items():
             if target_data['events']:
-                print(f"  🎯 {target_name}:")
+                print(f"  {target_name}:")
                 for i, event in enumerate(target_data['events'][:3]):
                     start_frame_corrected = event['start_frame'] + frame_offset
                     end_frame_corrected = event['end_frame'] + frame_offset
@@ -1268,6 +1268,109 @@ class UltraOptimizedProcessor:
                 
                 if len(target_data['events']) > 3:
                     print(f"    ... and {len(target_data['events'])-3} more events")
+
+    def export_framewise_csv(self, results, object_names, csv_path):
+        """
+        Write a frame-by-frame CSV of per-object spatial data + overlap information.
+        - Does NOT alter any computations.
+        - Uses existing 'results' (masks) and self.frame_analyses (overlaps).
+        """
+        import csv
+        import numpy as np
+
+        # Guard: nothing to do
+        if not results:
+            print("No results to export to CSV.")
+            return
+
+        # Convenience
+        analyses = getattr(self, "frame_analyses", {}) or {}
+        target_ids = set(getattr(self, "overlap_tracker", None).target_objects.keys()
+                        if getattr(self, "overlap_tracker", None) else [])
+
+        # CSV header
+        fieldnames = [
+            "frame_idx",
+            "obj_id",
+            "obj_name",
+            "is_target",
+            "bbox_x", "bbox_y", "bbox_w", "bbox_h",
+            "centroid_x", "centroid_y",
+            "area_px",
+            "overlapped_by_targets",
+            "target_looking_at",
+            "looking_at_count",
+        ]
+
+        def _mask_stats(m):
+            """Return (x,y,w,h,cx,cy,area) or (None,... ) if empty."""
+            try:
+                m = m.astype(np.uint8)
+                ys, xs = np.where(m > 0)
+                if ys.size == 0:
+                    return (None,)*7
+                x0, y0 = int(xs.min()), int(ys.min())
+                x1, y1 = int(xs.max()), int(ys.max())
+                w, h = (x1 - x0 + 1), (y1 - y0 + 1)
+                cx = float(xs.mean())
+                cy = float(ys.mean())
+                area = int(ys.size)
+                return x0, y0, w, h, cx, cy, area
+            except Exception:
+                return (None,)*7
+
+        with open(csv_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+
+            # Process frames in order
+            for frame_idx in sorted(results.keys()):
+                frame_results = results.get(frame_idx, {})
+                frame_analysis = analyses.get(frame_idx, {}) or {}
+                target_overlaps = frame_analysis.get("target_overlaps", {}) or {}
+
+                # Build a reverse index for "overlapped_by_targets"
+                overlapped_by = {}  # obj_id -> [target_name, ...]
+                for t_id, objs in target_overlaps.items():
+                    t_name = object_names.get(t_id, f"Object_{t_id}")
+                    for entry in (objs or []):
+                        oid = entry.get("object_id")
+                        if oid is None:
+                            continue
+                        overlapped_by.setdefault(oid, []).append(t_name)
+
+                # Emit one row per object present in this frame's results
+                for obj_id, mask in frame_results.items():
+                    obj_name = object_names.get(obj_id, f"Object_{obj_id}")
+                    # If mask is [1,H,W], squeeze
+                    if hasattr(mask, "shape") and len(mask.shape) == 3:
+                        mask = mask.squeeze()
+
+                    bx, by, bw, bh, cx, cy, area = _mask_stats(mask)
+
+                    is_target = (obj_id in target_ids)
+
+                    # For target rows, list who this target is "looking at" this frame
+                    looking_at = []
+                    if is_target and obj_id in target_overlaps:
+                        looking_at = [e.get("object_name", f"Object_{e.get('object_id')}")
+                                    for e in (target_overlaps.get(obj_id) or [])]
+
+                    row = dict(
+                        frame_idx=frame_idx,
+                        obj_id=obj_id,
+                        obj_name=obj_name,
+                        is_target=bool(is_target),
+                        bbox_x=bx, bbox_y=by, bbox_w=bw, bbox_h=bh,
+                        centroid_x=cx, centroid_y=cy,
+                        area_px=area,
+                        overlapped_by_targets=";".join(overlapped_by.get(obj_id, [])),
+                        target_looking_at=";".join(looking_at) if is_target else "",
+                        looking_at_count=(len(looking_at) if is_target else 0),
+                    )
+                    writer.writerow(row)
+
+        print(f"📄 CSV exported: {csv_path}")
 
 # Point selection function (same as before but with enhanced tips)
 def select_points_opencv(frame, processor=None):
@@ -1865,12 +1968,52 @@ class VideoAnalysisApp:
         # Output options
         output_frame = tk.LabelFrame(main_frame, text="📁 Output Options", font=("Arial", 9, "bold"))
         output_frame.pack(fill=tk.X, pady=(10, 10))
-        
+
+        # ✅ Annotated video 
+        self.enable_video_export = tk.BooleanVar(value=True)
+        video_cb = tk.Checkbutton(
+            output_frame,
+            text="🎞️ Save annotated video (with masks/labels)",
+            variable=self.enable_video_export
+        )
+        video_cb.pack(anchor=tk.W, padx=5, pady=2)
+
+        # ✅ ELAN file
         self.enable_elan_export = tk.BooleanVar(value=True)
-        elan_cb = tk.Checkbutton(output_frame, 
-                                text="📄 Export ELAN file with 'looking at' event timing",
-                                variable=self.enable_elan_export)
+        elan_cb = tk.Checkbutton(
+            output_frame,
+            text="📄 Export ELAN file with 'looking at' event timing",
+            variable=self.enable_elan_export
+        )
         elan_cb.pack(anchor=tk.W, padx=5, pady=2)
+
+        # ✅ CSV file
+        self.enable_csv_export = tk.BooleanVar(value=True)
+        csv_cb = tk.Checkbutton(
+            output_frame,
+            text="📊 Save frame-by-frame CSV (positions + overlaps)",
+            variable=self.enable_csv_export
+        )
+        csv_cb.pack(anchor=tk.W, padx=5, pady=2)
+
+        # Output folder
+        outdir_row = tk.Frame(output_frame)
+        outdir_row.pack(fill=tk.X, padx=5, pady=(6,2))
+
+        tk.Label(outdir_row, text="Output folder:").pack(side=tk.LEFT)
+
+        self.output_dir_var = tk.StringVar(value="")  # empty = defaults next to the video
+        outdir_entry = tk.Entry(outdir_row, textvariable=self.output_dir_var)
+        outdir_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(5,5))
+
+        tk.Button(outdir_row, text="Choose…", command=self.select_output_dir).pack(side=tk.LEFT)
+
+        tk.Label(
+            output_frame,
+            text="(Leave empty to save next to the video)",
+            font=("Arial", 8), fg="gray"
+        ).pack(anchor=tk.W, padx=5)
+
         
         # Process button
         process_frame = tk.Frame(main_frame)
@@ -1942,8 +2085,20 @@ class VideoAnalysisApp:
         except Exception:
             pass
 
+        try:
+            self.output_dir_var.set(os.path.dirname(path))
+        except Exception:
+            pass
+
         # Optional: enable your "Process" button if you gate it on selection
         # self.process_btn.configure(state="normal")
+
+    def select_output_dir(self):
+        from tkinter import filedialog
+        path = filedialog.askdirectory(title="Select output folder")
+        if path:
+            os.makedirs(path, exist_ok=True)
+            self.output_dir_var.set(path)
 
     
     def scan_videos(self, folder):
@@ -2147,6 +2302,10 @@ class VideoAnalysisApp:
             if points_dict is None:
                 self.status_var.set("Processing cancelled")
                 return
+            
+            # Use the chosen output folder (falls back to the video folder if empty)
+            out_root = (self.output_dir_var.get().strip() or os.path.dirname(video_path))
+            os.makedirs(out_root, exist_ok=True)  # make sure it exists
 
             # Run heavy processing in background to keep GUI responsive
             def _worker():
@@ -2157,47 +2316,77 @@ class VideoAnalysisApp:
                     # 1) Propagate & detect
                     results = processor.process_video_with_memory_management(points_dict, labels_dict, object_names, debug=True)
 
-                    # 2) Save annotated video (+ optional ELAN) in worker
+                    # 2) Save annotated video + ELAN + CSV in worker (honor checkboxes)
+                    video_saved = False
                     elan_created = False
-                    out_video = None
-                    if results is not None:
-                        out_video = os.path.join(os.path.dirname(video_path), f"{video_stem}_output_enhanced_overlap.mp4")
-                        processor.save_results_video_with_enhanced_annotations(results, out_video, fps=fps, show_original=True, alpha=0.5)
+                    csv_saved = False
 
+                    out_video = None
+                    elan_path = None
+                    csv_path = None
+
+                    if results is not None:
+                        # 🎞️ Annotated video
+                        if getattr(self, "enable_video_export", tk.BooleanVar(value=True)).get():
+                            out_video = os.path.join(out_root, f"{video_stem}_ANNOTATED_VIDEO.mp4")            # <-- CHANGED
+                            processor.save_results_video_with_enhanced_annotations(
+                                results, out_video, fps=fps, show_original=True, alpha=0.5
+                            )
+                            video_saved = True
+
+                        # 📄 ELAN timeline
                         if getattr(self, "enable_elan_export", tk.BooleanVar(value=True)).get():
-                            elan_path = os.path.join(os.path.dirname(video_path), f"{video_stem}_enhanced_target_overlaps.eaf")
+                            elan_path = os.path.join(out_root, f"{video_stem}_ELAN_TIMELINE.eaf")              # <-- CHANGED
                             processor.create_elan_file(video_path, elan_path, fps=fps, frame_offset=0)
                             elan_created = True
+
+                        # 📊 CSV export
+                        if getattr(self, "enable_csv_export", tk.BooleanVar(value=True)).get():
+                            csv_path = os.path.join(out_root, f"{video_stem}_FRAME_BY_FRAME.csv")              # <-- CHANGED
+                            if hasattr(processor, "export_framewise_csv"):
+                                processor.export_framewise_csv(results, object_names, csv_path)
+                            elif hasattr(processor, "create_csv_file"):
+                                processor.create_csv_file(video_path, csv_path, fps=fps, frame_offset=0)
+                            csv_saved = True
 
                         # Build success summary
                         summary = processor.overlap_tracker.get_overlap_summary() if processor.overlap_tracker else {}
                         target_info = ""
                         for target_name, data in summary.items():
                             try:
-                                target_info += f"\n🎯 {target_name}: {data['total_events']} events, {data['total_overlap_frames']} frames"
+                                target_info += f"\n {target_name}: {data['total_events']} events, {data['total_overlap_frames']} frames"
                             except Exception:
                                 pass
-                            if elan_created:
-                                target_info += "\n📄 ELAN file: enhanced_target_overlaps.eaf"
+
                         named_objects = [name for name in object_names.values()]
                         objects_summary = "\n".join([f"  • {name}" for name in named_objects])
 
-                        success_msg = f"""🎯 'Looking At' Event Detection Complete!
+                        generated = []
+                        if video_saved and out_video:
+                            generated.append(f"• {os.path.basename(out_video)} – annotated video")
+                        if elan_created and elan_path:
+                            generated.append(f"• {os.path.basename(elan_path)} – ELAN timeline")
+                        if csv_saved and csv_path:
+                            generated.append(f"• {os.path.basename(csv_path)} – frame-by-frame CSV")
+                        generated_section = "\n".join(generated)
 
-Reference Frame: {frame_num}
-Detection Method: Any spatial relationship = 'looking at' event
-Detection Threshold: {overlap_threshold*100:.1f}%
-Clean Timing: Accurate begin/end for behavioral analysis
-Results saved in: {os.path.dirname(video_path)}
+                        success_msg = f""" 'Looking At' Event Detection Complete!
 
-📁 Generated Files:
-• {os.path.basename(out_video)} - Video with event indicators""" + ("""
-• {video_stem}_enhanced_target_overlaps.eaf - ELAN with clean event timing""" if elan_created else "") + f"""{target_info}
+                            Reference Frame: {frame_num}
+                            Detection Method: Any spatial relationship = 'looking at' event
+                            Detection Threshold: {overlap_threshold*100:.1f}%
+                            Clean Timing: Accurate begin/end for behavioral analysis
+                            Results saved in: {out_root}                                      
+                            
+                            📁 Generated Files:
+                            {generated_section}{target_info}
 
-📊 Analyzed Objects ({len(object_names)}):
-{objects_summary}
+                            📊 Analyzed Objects ({len(object_names)}):
+                            {objects_summary}
 
-✅ 'Looking at' event detection with clean timing completed!"""
+                            ✅ 'Looking at' event detection with clean timing completed!"""
+
+
 
                         # UI finalize on main thread
                         self.root.after(0, lambda: messagebox.showinfo("'Looking At' Event Detection Complete", success_msg))
