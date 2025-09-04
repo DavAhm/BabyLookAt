@@ -2393,7 +2393,7 @@ class VideoAnalysisApp:
                             generated.append(f"• {os.path.basename(csv_path)} – frame-by-frame CSV")
                         generated_section = "\n".join(generated)
 
-                        success_msg = f"""EnvisionObjectAnnotator: Voideo Processing Complete!
+                        success_msg = f"""EnvisionObjectAnnotator: Video Processing Complete!
 
                         Reference Frame: {frame_num}
                         Detection Method: Overlapping = 'looking at' event
