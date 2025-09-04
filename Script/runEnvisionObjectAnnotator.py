@@ -424,7 +424,7 @@ class ImprovedTargetOverlapTracker:
                                         'object_id': obj_id,
                                         'object_name': obj_name,
                                         'event_type': 'looking_at',
-                                        'relationship_desc': f"LOOKING AT {obj_name} (continuing)"
+                                        'relationship_desc': f"OVERLAPS {obj_name} (continuing)"
                                     })
                                     print(f"      ✅ STRONG OVERLAP CONTINUES: {target_name} ↔ {obj_name}")
                                 else:
@@ -592,7 +592,7 @@ class UltraOptimizedProcessor:
         print(f"  Frames: {len(self.frame_names)}")
         print(f"  Reference frame: {reference_frame}")
         print(f"  Overlap threshold: {overlap_threshold*100:.1f}%")
-        print(f"  Event detection: Any spatial relationship = 'looking at' event")
+        print(f"  Event detection: Any spatial relationship = 'overlapping' event")
         print(f"  Clean timing: Accurate begin/end times for ELAN export")
         print(f"  Simplified annotations: Focus on event detection, not percentages")
         
@@ -1022,17 +1022,17 @@ class UltraOptimizedProcessor:
                             # Create status label
                             if is_target and looking_at:
                                 if len(looking_at) == 1:
-                                    label = f"🎯{obj_name} → LOOKING AT {looking_at[0]}"
+                                    label = f"{obj_name} → OVERLAPS {looking_at[0]}"
                                 else:
-                                    label = f"🎯{obj_name} → LOOKING AT {len(looking_at)} OBJECTS"
+                                    label = f"{obj_name} → OVERLAPS {len(looking_at)} OBJECTS"
                             elif is_being_looked_at:
                                 if len(looked_at_by) == 1:
-                                    label = f"{obj_name} ← LOOKED AT BY {looked_at_by[0]}"
+                                    label = f"{obj_name} ←  OVERLAPS {looked_at_by[0]}"
                                 else:
-                                    label = f"{obj_name} ← LOOKED AT BY {len(looked_at_by)} TARGETS"
+                                    label = f"{obj_name} ← OVERLAPS {len(looked_at_by)} TARGETS"
                             else:
                                 if is_target:
-                                    label = f"🎯{obj_name}"
+                                    label = f"{obj_name}"
                                 else:
                                     label = obj_name
                             
@@ -1555,7 +1555,7 @@ def select_points_opencv(frame, processor=None):
             ("R",           "Reset points"),
             ("N",           "Next object"),
             ("P",           "Previous object"),   # <-- added back
-            ("Enter",       "Finish"),
+            ("Enter",       "Finish & Start Video Processing"),
             ("Q",           "Quit"),
         ]
 
@@ -1742,64 +1742,6 @@ def select_points_opencv(frame, processor=None):
     
 
 # GUI Application class with enhanced overlap detection
-
-    def _maybe_emit_preview(self, frame_idx, frame_results, frame_analysis):
-        """Compose a downscaled overlay and deliver it to the GUI preview callback.
-        Runs only every N frames. Doesn't alter core processing logic."""
-        if not getattr(self, 'preview_callback', None) or getattr(self, 'preview_stride', None) is None:
-            return
-        if frame_idx % self.preview_stride != 0:
-            return
-        try:
-            # Build overlay on the original frame
-            frame_path = os.path.join(self.video_dir, self.frame_names[frame_idx])
-            frame = cv2.imread(frame_path)
-            if frame is None:
-                return
-            H, W = frame.shape[:2]
-            overlay = frame.copy()
-            # Draw masks
-            try:
-                items_iter = list(frame_results.items())
-            except Exception:
-                items_iter = []
-            for i, (obj_id, mask) in enumerate(items_iter):
-                if mask is None:
-                    continue
-                m = mask[0] if hasattr(mask, 'shape') and len(mask.shape) == 3 else mask
-                if m is None:
-                    continue
-                if getattr(m, 'shape', None) != (H, W):
-                    try:
-                        m = cv2.resize(m.astype(float), (W, H), interpolation=cv2.INTER_LINEAR) > 0.5
-                    except Exception:
-                        continue
-                else:
-                    m = (m.astype(float) > 0.5)
-                color = getattr(self, '_preview_colors', [(0,255,0)])[i % len(getattr(self, '_preview_colors', [(0,255,0)]))]
-                idx = m.astype(bool)
-                if idx.any():
-                    overlay[idx] = (0.6*float(color[0]), 0.6*float(color[1]), 0.6*float(color[2])) + 0.4*overlay[idx]
-            # optional text
-            label = f"Frame {frame_idx}"
-            try:
-                events = frame_analysis.get('target_overlaps', {}) if frame_analysis else {}
-                if events:
-                    label += " | overlaps"
-            except Exception:
-                pass
-            cv2.putText(overlay, label, (12, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255,255,255), 2, cv2.LINE_AA)
-            # Downscale
-            max_side = int(getattr(self, 'preview_max_dim', 720))
-            if max(frame.shape[:2]) > max_side and max_side > 0:
-                scale = max_side / max(frame.shape[:2])
-                overlay = cv2.resize(overlay, (int(W*scale), int(H*scale)))
-            # Send to GUI
-            self.preview_callback(overlay.astype('uint8'))
-        except Exception as e:
-            print(f"[preview] skipped: {e}")
-    
-
 class VideoAnalysisApp:
     def __init__(self):
         # NEW: modern root + theme
@@ -2453,21 +2395,22 @@ class VideoAnalysisApp:
                             generated.append(f"• {os.path.basename(csv_path)} – frame-by-frame CSV")
                         generated_section = "\n".join(generated)
 
-                        success_msg = f""" 'Looking At' Event Detection Complete!
+                        success_msg = f"""EnvisionObjectAnnotator: Voideo Processing Complete!
 
-                            Reference Frame: {frame_num}
-                            Detection Method: Any spatial relationship = 'looking at' event
-                            Detection Threshold: {overlap_threshold*100:.1f}%
-                            Clean Timing: Accurate begin/end for behavioral analysis
-                            Results saved in: {out_root}                                      
-                            
-                            📁 Generated Files:
-                            {generated_section}{target_info}
+                        Reference Frame: {frame_num}
+                        Detection Method: Overlapping = 'looking at' event
+                        Detection Threshold: {overlap_threshold*100:.1f}%
+                        Clean Timing: Accurate begin/end for behavioral analysis
+                        Results saved in: {out_root}
 
-                            📊 Analyzed Objects ({len(object_names)}):
-                            {objects_summary}
+                        📁 Generated Files:
+                        {generated_section}{target_info}
 
-                            ✅ 'Looking at' event detection with clean timing completed!"""
+                        📊 Analyzed Objects ({len(object_names)}):
+                        {objects_summary}
+
+                        ✅ 'Looking at' event detection with clean timing completed!
+                        """
 
 
 
