@@ -1772,13 +1772,13 @@ class VideoAnalysisApp:
 
         # Tabs
         self.preview_frame = ctk.CTkFrame(self.notebook); self.notebook.add(self.preview_frame, text="Preview")
-        self.results_frame = ctk.CTkFrame(self.notebook); self.notebook.add(self.results_frame, text="Results")
-        self.progress_frame = ctk.CTkFrame(self.notebook); self.notebook.add(self.progress_frame, text="Progress")
+        #self.results_frame = ctk.CTkFrame(self.notebook); self.notebook.add(self.results_frame, text="Results")
+        #self.progress_frame = ctk.CTkFrame(self.notebook); self.notebook.add(self.progress_frame, text="Progress")
 
         # Progress console
-        from tkinter import scrolledtext
-        self.progress_text = scrolledtext.ScrolledText(self.progress_frame, height=20, wrap="word", font=("Consolas", 10))
-        self.progress_text.pack(fill="both", expand=True, padx=10, pady=10)
+        #from tkinter import scrolledtext
+        #self.progress_text = scrolledtext.ScrolledText(self.progress_frame, height=20, wrap="word", font=("Consolas", 10))
+        #self.progress_text.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Preview placeholder
         self.preview_label = ctk.CTkLabel(self.preview_frame, text="No video loaded")
