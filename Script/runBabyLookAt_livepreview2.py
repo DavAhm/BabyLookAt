@@ -1805,9 +1805,11 @@ class VideoAnalysisApp:
                         f"SAM2 checkpoints not found. Please update paths.")
                     return
                 else:
-                    print("✅ Using small model for better memory efficiency")
+                    print("✅ Using small model (sam2.1_hiera_small.pt) \n " \
+                    "with the sam2.1_hiera_s.yaml configuration")
             else:
-                print("✅ Using large model with enhanced overlap detection")
+                print("✅ Using large model (sam2.1_hiera_large.pt) \n " \
+                "with the sam2.1_hiera_l.yaml configuration")
             
             from sam2.build_sam import build_sam2_video_predictor
             
