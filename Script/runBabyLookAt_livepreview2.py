@@ -1925,7 +1925,7 @@ class VideoAnalysisApp:
 
         
         # Simplified event detection options
-        overlap_frame = tk.LabelFrame(main_frame, text="🎯 'Looking At' Event Settings", font=("Arial", 9, "bold"))
+        overlap_frame = tk.LabelFrame(main_frame, text="🎯 'Select Detection Threshold", font=("Arial", 9, "bold"))
         overlap_frame.pack(fill=tk.X, pady=(10, 10))
         
         # Overlap threshold
@@ -1942,7 +1942,8 @@ class VideoAnalysisApp:
         
         # Event detection info
         event_info = tk.Label(overlap_frame, 
-                             text="Event Detection: Any spatial relationship (overlap/inclusion) = 'looking at' event",
+                             text=("Event rule: 'looking-at' when TARGET intersects another object\n"
+                            "• overlap ≥ detection threshold (%)  OR  • TARGET centroid inside object mask"),     
                              font=("Arial", 8), fg="darkgreen", wraplength=700)
         event_info.pack(anchor=tk.W, padx=5, pady=(2, 5))
         
