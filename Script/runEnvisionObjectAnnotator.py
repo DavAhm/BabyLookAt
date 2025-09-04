@@ -2312,7 +2312,7 @@ class VideoAnalysisApp:
                 batch_size=batch_size,
                 auto_fallback=self.auto_fallback.get() if hasattr(self, "auto_fallback") else True,
                 preview_callback=self._q_put_preview,
-                preview_stride=max(5, int(fps//2)) if isinstance(fps, (int,float)) and fps>0 else 10,
+                preview_stride = 1,  #every frame
                 preview_max_dim=720)
 
             # Get points/labels/object names via the OpenCV selector
@@ -2513,7 +2513,7 @@ class VideoAnalysisApp:
             pass
         if last is not None:
             self.preview_hook(last)
-        self.root.after(50, self._drain_preview_queue)
+        self.root.after(20, self._drain_preview_queue)   # ~66 fps polling
 
     def run(self):
         """Run the application"""
