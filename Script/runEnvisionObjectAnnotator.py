@@ -1027,7 +1027,7 @@ class UltraOptimizedProcessor:
                                     label = f"{obj_name} → OVERLAPS {len(looking_at)} OBJECTS"
                             elif is_being_looked_at:
                                     # Suppress label on non-targets to avoid duplicates
-                                    label = None
+                                    continue
                             else:
                                 if is_target:
                                     label = f"{obj_name}"
