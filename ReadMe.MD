@@ -1,4 +1,6 @@
-#  EnvisionObjectAnnotator — Object Tracking & “Looking At” Detection with SAM2
+# EnvisionObjectAnnotator — Object Tracking & “Looking At” Detection with SAM2
+
+ **Full Documentation & Tutorial:** [EnvisionBox Module →](https://envisionbox.org/embedded_EnvisionObjectAnnotator.html)
 
 ![Demo](https://raw.githubusercontent.com/DavAhm/EnvisionObjectAnnotator/main/extra/Video_Process.gif)
 
@@ -22,7 +24,7 @@ The tool was developed as part of the **EnvisionBOXBABY project**, with a focus 
 
 ---
 
-## Getting Started
+##  Getting Started
 
 ### 1. Clone this repository
 Click the green **Code** button (top right) → **Download ZIP** → extract it to a folder (e.g., `C:\EnvisionObjectAnnotator`).  
@@ -30,4 +32,54 @@ Or use git:
 ```bash
 git clone https://github.com/DavAhm/EnvisionObjectAnnotator.git
 cd EnvisionObjectAnnotator
+```
+2. ### Install Sam2 
+Follow the installation guide for SAM2: [SAM 2 Installation Instructions →](docs/installation_SAM2.md)
+
+3. ### Install the supporting Tools and Packages 
+Follow the installation guide for Tools and Packages: [Tools and Packages Installation Instructions →](docs/installation_tools_packages.md)
+
+---
+
+##  How It Works
+
+1. **Load your video** → supports `.mp4`, `.mov`, `.avi`, etc.  
+2. **Pick a reference frame** → usually frame `0`.  
+3. **Annotate objects**:  
+   - Left-click = positive point  
+   - Right-click = negative point  
+   - Press **C** to name the object (must contain `"target"` for gaze markers)  
+   - Press **T** to test masks  
+   - Press **Enter** when done  
+4. **Set detection threshold** → default is 10% overlap.  
+5. **Process video** → masks are propagated, overlaps are detected, and outputs are generated.
+
+---
+
+##  What it outputs:
+
+- **Annotated video**: shows objects with color-coded masks and on-screen event labels  
+- **CSV file**: frame-by-frame details with bounding boxes, centroids, areas, and overlaps  
+- **ELAN file**: time-aligned tiers with “Looking at: [object]” events for qualitative coding
+
+---
+
+## Creators
+
+- Wim Pouw —  ([wim.pouw@donders.ru.nl](mailto:wim.pouw@donders.ru.nl))  
+- Babajide Owoyele —   ([babajide.owoyele@hpi.de](babajide.owoyele@hpi.de))  
+- Davide Ahmar —  ([ahmar.davide@gmail.com](mailto:ahmar.davide@gmail.com))  
+
+---
+
+## Citation
+If you use this tool in your research, please cite the EnvisionBox project.  
+*(Full reference will be added when publication is available.)*
+
+
+---
+
+##  Related Resources
+- [Meta AI SAM2](https://github.com/facebookresearch/sam2)  
+- [EnvisionBox Project](https://www.envisionbox.org)  
 
