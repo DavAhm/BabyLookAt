@@ -2,6 +2,7 @@
 <h2 align="center" style=font-size:200px>An Automatic Object-to-Object Overlap Detector with SAM2</h2>
 
  **Full Documentation & Tutorial:** [EnvisionBox Module →](https://envisionbox.org/embedded_EnvisionObjectAnnotator.html)
+
 *Authors*
 Wim Pouw         (wim.pouw@donders.ru.nl)         
 Babajide Owoyele (babajide.owoyele@hpi.de)        
