@@ -1,7 +1,7 @@
 <h1 align="center" style=font-size:200px>EnvisionObjectAnnotator:</h1>
 <h2 align="center" style=font-size:200px>An Automatic Object-to-Object Overlap Detector with SAM2</h2>
 
- **Full Documentation & Tutorial:** [EnvisionBox Module →](https://envisionbox.org/embedded_EnvisionObjectAnnotator.html)
+ <p align="center" style=bold [EnvisionBox Module](https://envisionbox.org/embedded_EnvisionObjectAnnotator.html)</p>
 
 *Authors*
 Wim Pouw         (wim.pouw@donders.ru.nl)         
