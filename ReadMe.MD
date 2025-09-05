@@ -1,12 +1,20 @@
 <h1 align="center" style=font-size:200px>EnvisionObjectAnnotator:</h1>
 <h2 align="center" style=font-size:200px>An Automatic Object-to-Object Overlap Detector with SAM2</h2>
 
- <p align="center" style=bold [EnvisionBox Module](https://envisionbox.org/embedded_EnvisionObjectAnnotator.html)</p>
+<p align="center">
+  <a href="https://envisionbox.org/embedded_EnvisionObjectAnnotator.html">
+    <b>📖 EnvisionBox Module — Full Documentation</b>
+  </a>
+</p>
 
-*Authors*
-Wim Pouw         (wim.pouw@donders.ru.nl)         
-Babajide Owoyele (babajide.owoyele@hpi.de)        
-Davide Ahmar     (ahmar.davide@gmail.com)
+---
+
+<p align="center">
+  <b>Authors</b><br>
+  Wim Pouw — <a href="mailto:wim.pouw@donders.ru.nl">wim.pouw@donders.ru.nl</a><br>
+  Babajide Owoyele — <a href="mailto:babajide.owoyele@hpi.de">babajide.owoyele@hpi.de</a><br>
+  Davide Ahmar — <a href="mailto:ahmar.davide@gmail.com">ahmar.davide@gmail.com</a>
+</p>
 
 <p align="center">
   <img src="extra/Video_Process.gif">
