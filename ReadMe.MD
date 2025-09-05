@@ -1,8 +1,12 @@
-# EnvisionObjectAnnotator — Object Tracking & “Looking At” Detection with SAM2
+<h1 align="center" style=font-size:200px>EnvisionObjectAnnotator:</h1>
+<h2 align="center" style=font-size:200px>An Automatic Object-to-Object Overlap Detector with SAM2</h2>
+
 
  **Full Documentation & Tutorial:** [EnvisionBox Module →](https://envisionbox.org/embedded_EnvisionObjectAnnotator.html)
 
-![Demo](https://raw.githubusercontent.com/DavAhm/EnvisionObjectAnnotator/main/extra/Video_Annotation.gif)
+<p align="center">
+  <img src="extra/Video_Process.gif">
+</p>
 
 This repository provides a user-friendly Python application built on [Meta AI’s SAM2](https://github.com/facebookresearch/sam2) model for **object tracking and overlap (“looking at”) detection** in videos.  
 
