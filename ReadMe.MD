@@ -78,6 +78,11 @@ Follow the installation guide for Tools and Packages: [Tools and Packages Instal
 - **CSV file**: frame-by-frame details with bounding boxes, centroids, areas, and overlaps  
 - **ELAN file**: time-aligned tiers with “Looking at: [object]” events for qualitative coding
 
+<p align="center">
+  <b>An example of the raw (left) and annotated (right) video output </b><br>
+  <img src="extra/Annotated_Video.gif">
+</p>
+
 ---
 
 ## Citation
