@@ -1,8 +1,11 @@
 <h1 align="center" style=font-size:200px>EnvisionObjectAnnotator:</h1>
 <h2 align="center" style=font-size:200px>An Automatic Object-to-Object Overlap Detector with SAM2</h2>
 
-
  **Full Documentation & Tutorial:** [EnvisionBox Module →](https://envisionbox.org/embedded_EnvisionObjectAnnotator.html)
+*Authors*
+Wim Pouw         (wim.pouw@donders.ru.nl)         
+Babajide Owoyele (babajide.owoyele@hpi.de)        
+Davide Ahmar     (ahmar.davide@gmail.com)
 
 <p align="center">
   <img src="extra/Video_Process.gif">
@@ -65,14 +68,6 @@ Follow the installation guide for Tools and Packages: [Tools and Packages Instal
 - **Annotated video**: shows objects with color-coded masks and on-screen event labels  
 - **CSV file**: frame-by-frame details with bounding boxes, centroids, areas, and overlaps  
 - **ELAN file**: time-aligned tiers with “Looking at: [object]” events for qualitative coding
-
----
-
-## Creators
-
-- Wim Pouw —  ([wim.pouw@donders.ru.nl](mailto:wim.pouw@donders.ru.nl))  
-- Babajide Owoyele —   ([babajide.owoyele@hpi.de](babajide.owoyele@hpi.de))  
-- Davide Ahmar —  ([ahmar.davide@gmail.com](mailto:ahmar.davide@gmail.com))  
 
 ---
 
