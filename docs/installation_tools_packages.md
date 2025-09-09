@@ -1,6 +1,6 @@
-<h1 align="center">EnvisionBOXbaby - Supporting Tools Installation Guide</h1>
+<h1 align="center">EnvisionObjectAnnotator - Supporting Tools Installation Guide</h1>
 
-Before running the `{script name}`, we need to install a few supporting tools and Python packages.
+Before running the `runEnvisionObjectAnnotator.py`, we need to install a few supporting tools and Python packages.
 
 ### What we will need:
 - **sam2_env in Anaconda** (created in the [SAM2 Installation Guide](installation_SAM2.md))
