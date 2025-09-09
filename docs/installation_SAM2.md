@@ -1,7 +1,6 @@
 <h1 align="center">EnvisionBOXbaby - SAM2 Installation Guide</h1>
 
-This guide walks you through installing and running the **SAM2 (Segment Anything Model 2)** video analysis tool as part of the **EnvisionBOXbaby** toolkit. 
-We will leverage this model to allow automatic object tracking and "looking at" event detection from videos
+This guide walks you through installing and running the **SAM2 (Segment Anything Model 2)** video analysis tool as part of the **EnvisionObjectAnnotator** toolkit. 
 
 We designed this setup for **Windows ≥ 10** users.  
 *(Linux is also supported by SAM2 itself, but these instructions focus on Windows.)*
