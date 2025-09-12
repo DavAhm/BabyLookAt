@@ -11,7 +11,7 @@
 
 <p align="center">
   <b>Authors</b><br>
-  Davide Ahmar — <a href="mailto:ahmar.davide@gmail.com">ahmar.davide@gmail.com</a>br>
+  Davide Ahmar — <a href="mailto:ahmar.davide@gmail.com">ahmar.davide@gmail.com</a><br>
   Wim Pouw — <a href="mailto:wim.pouw@donders.ru.nl">wim.pouw@donders.ru.nl</a><br>
   Babajide Owoyele — <a href="mailto:babajide.owoyele@hpi.de">babajide.owoyele@hpi.de</a>
 </p>
